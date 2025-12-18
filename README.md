@@ -288,7 +288,7 @@
 
     <div id="text-controls">
         <strong>Customize Texts</strong>
-        <label>Title <input type="text" id="text-title" value="BIN NA RECAP 2025"></label>
+        <label>Title <input type="text" id="text-title" value="Lastember"></label>
         <label>Heart Message <input type="text" id="text-heart" value="With Love ❤️"></label>
     </div>
 
