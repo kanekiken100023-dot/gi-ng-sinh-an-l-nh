@@ -177,9 +177,28 @@
             letter-spacing: 1px;
         }
 
-        #color-controls, #text-controls {
+        #color-controls {
             position: absolute;
             left: 30px;
+            top: 80px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(212,175,55,0.4);
+            backdrop-filter: blur(10px);
+            z-index: 30;
+            pointer-events: auto;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            color: #d4af37;
+            font-size: 12px;
+            min-width: 220px;
+        }
+
+        #text-controls {
+            position: absolute;
+            right: 30px;
             top: 80px;
             background: rgba(0,0,0,0.7);
             padding: 15px;
@@ -202,12 +221,11 @@
             gap: 5px;
         }
 
-        #text-controls input[type="text"] {
+        #text-controls input[type="text"], #text-controls select {
             background: rgba(20,20,20,0.8);
             border: 1px solid rgba(212,175,55,0.4);
             color: #d4af37;
             padding: 6px;
-            font-family: 'Cinzel', serif;
         }
 
         #color-controls label {
@@ -225,7 +243,7 @@
     </style>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Great+Vibes&family=Playfair+Display&family=Dancing+Script&family=Pacifico&display=swap');
     </style>
 
     <script type="importmap">
@@ -247,8 +265,10 @@
 
     <div id="canvas-container"></div>
 
+    <audio id="bg-music" loop autoplay volume="0.5"></audio>
+
     <div id="ui-layer">
-        <h1>Last ember</h1>
+        <h1>Lastember</h1>
         
         <div class="controls-wrapper">
             <div class="btn-group">
@@ -287,9 +307,21 @@
     </div>
 
     <div id="text-controls">
-        <strong>Customize Texts</strong>
+        <strong>Customize</strong>
         <label>Title <input type="text" id="text-title" value="Lastember"></label>
         <label>Heart Message <input type="text" id="text-heart" value="With Love ❤️"></label>
+        <label>Font
+            <select id="font-select">
+                <option value="'Cinzel', serif">Cinzel</option>
+                <option value="'Great Vibes', cursive">Great Vibes</option>
+                <option value="'Playfair Display', serif">Playfair Display</option>
+                <option value="'Dancing Script', cursive">Dancing Script</option>
+                <option value="'Pacifico', cursive">Pacifico</option>
+            </select>
+        </label>
+        <label>Background Music
+            <input type="file" id="music-upload" accept="audio/*">
+        </label>
     </div>
 
     <script type="module">
@@ -345,6 +377,7 @@
         const debugInfo = document.getElementById('debug-info');
         const heartText = document.getElementById('heart-text');
         const titleElement = document.querySelector('#ui-layer h1');
+        const bgMusic = document.getElementById('bg-music');
 
         async function init() {
             initThree();
@@ -904,9 +937,11 @@
             const textPanel = document.getElementById('text-controls');
 
             toggle.addEventListener('click', () => {
-                const anyShown = colorPanel.style.display === 'flex' || textPanel.style.display === 'flex';
-                colorPanel.style.display = anyShown ? 'none' : 'flex';
-                textPanel.style.display = anyShown ? 'none' : 'flex';
+                const colorShown = colorPanel.style.display === 'flex';
+                const textShown = textPanel.style.display === 'flex';
+
+                colorPanel.style.display = colorShown ? 'none' : 'flex';
+                textPanel.style.display = textShown ? 'none' : 'flex';
             });
 
             document.getElementById('color-gold').addEventListener('input', (e) => {
@@ -934,6 +969,19 @@
             });
             document.getElementById('text-heart').addEventListener('input', (e) => {
                 heartText.textContent = e.target.value;
+            });
+            document.getElementById('font-select').addEventListener('change', (e) => {
+                const font = e.target.value;
+                titleElement.style.fontFamily = font;
+                heartText.style.fontFamily = font;
+            });
+            document.getElementById('music-upload').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    bgMusic.src = url;
+                    bgMusic.play().catch(err => console.warn("Music play error:", err));
+                }
             });
         }
 
